@@ -20,6 +20,7 @@
   "homepage": "https://github.com/yiweimatou/yibinghoutai#readme",
   "dependencies": {
     "debug": "^2.2.0",
+    "formsy-material-ui": "^0.4.2",
     "formsy-react": "^0.18.0",
     "history": "^2.1.1",
     "isomorphic-fetch": "^2.2.1",

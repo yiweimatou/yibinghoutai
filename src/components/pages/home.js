@@ -1,13 +1,13 @@
 import React from 'react'
 
-class home extends React.Component{
+class Home extends React.Component{
 	render(){
 		return (
 			<div>
-				THIS HOME　PAGE
+				<h1>欢迎使用管理后台</h1>
 			</div>
 			)
 	}
 }
 
-export default home
+export default Home
