@@ -32,7 +32,7 @@ class App extends React.Component {
 					backgroundColor = {pink400}
 					size = {40}
 				/>
-			</div>
+            </div>
 			)
 		return (
 			<MuiThemeProvider muiTheme={getMuiTheme()}>
