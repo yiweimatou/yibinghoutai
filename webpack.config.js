@@ -27,10 +27,8 @@ webpackConfig.entry = {
     ] : APP_ENTRY_PATH,
     vendor: [
         'react',
-        'debug',
         'react-router',
         'react-dom',
-        'history'
     ]
 }
 
@@ -91,7 +89,8 @@ if (__DEV__) {
 // Don't split bundles during testing, since we only want import one bundle
 webpackConfig.plugins.push(
     new webpack.optimize.CommonsChunkPlugin({
-        names: ['vendor']
+        names: ['vendor'],
+        minChunks:Infinity
     }, new webpack.ProvidePlugin({
         React: 'react',
         'window.React': 'react'

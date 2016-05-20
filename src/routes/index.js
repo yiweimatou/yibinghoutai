@@ -1,20 +1,35 @@
 import React from 'react'
-import {
-	Route,
-	Redirect,
-	IndexRoute
-} from 'react-router'
-import App from '../components/App'
+import App from '../components/App.js'
+import Admin from '../models/Admin.js'
 import Home from '../components/pages/Home'
-import Login from '../components/pages/Login'
 
-const Routes = (
-	<div>
-		<Route path = '/' component = { App }>
-			<IndexRoute component={ Home }/>
-		</Route>
-		<Route path='/login' component = { Login } />
-	</div>
-)
+const requireAuth = (nextState, replace) => {
+	if (!Admin.loggedIn()) {
+		replace({
+			pathname: '/login',
+			state: {
+				nextPathname: nextState.location.pathname
+			}
+		})
+	}
+}
+const Routes = {
+	component: 'div',
+	childRoutes: [
+		require('./login.js'), {
+			path: '/',
+			component: App,
+			indexRoute:require('./home.js'),//{ component:Home },
+			onEnter:requireAuth,
+			childRoutes: [
+				require('./organize/index.js'),
+				{
+					path: '*',
+					component: require('../components/pages/PageNotFound.js')
+				}
+			]
+		}
+	]
+}
 
 export default Routes

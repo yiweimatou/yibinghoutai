@@ -1,4 +1,5 @@
 import React from 'react'
+import {withRouter} from 'react-router'
 import Drawer from 'material-ui/Drawer'
 import {List, ListItem, MakeSelectable} from 'material-ui/List'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -12,17 +13,17 @@ class AppNavDrawer extends React.Component{
 	static propTypes = {
 		location :React.PropTypes.object.isRequired
 	}
-	static contextTypes = {
-		router:React.PropTypes.object
-	}
 	styles = {
 		containerStyle :{
 			marginTop:getMuiTheme().appBar.height,
 			zIndex:getMuiTheme().zIndex.appBar - 1
+		},
+		listStyle:{
+			paddingTop:'0px'
 		}
 	}
 	handleSelect = (e,value) =>{
-		this.context.router.push(value)
+		this.props.router.push(value)
 	}
 	render(){
 		return (
@@ -33,8 +34,17 @@ class AppNavDrawer extends React.Component{
 				<SelectableList
 					value = {this.props.location.pathname}
 					onChange = {this.handleSelect}
+					style = {this.styles.listStyle}
 				>
 					<ListItem primaryText="后台主页" value="/" />
+					<ListItem 
+						primaryText="机构管理" 
+						primaryTogglesNestedList = {true}
+						nestedItems = {[
+							<ListItem primaryText = "新增" value = "/organize/add" />,
+							<ListItem primaryText = "1234" value = "/setting/changepwd" />
+						]}			
+					/>
 					<ListItem 
 						primaryText="个人设置" 
 						primaryTogglesNestedList = {true}
@@ -49,4 +59,4 @@ class AppNavDrawer extends React.Component{
 	}
 }
 
-export default AppNavDrawer
+export default withRouter(AppNavDrawer)

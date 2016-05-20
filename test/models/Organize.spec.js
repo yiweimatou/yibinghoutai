@@ -6,12 +6,12 @@ import {
 } from '../../src/constants/enumerate'
 import Chance from 'chance'
 import Organize from '../../src/models/Organize'
-import admin from '../../src/models/admin.js'
+import Admin from '../../src/models/Admin.js'
 
 var key, token
 
 test.before('get key and token', async t => {
-    const result = await admin.login('zhangruofan', '123456')
+    const result = await Admin.login('zhangruofan', '123456')
     t.is(result.code, CODE.NORMAL)
     key = result.data.key
     token = result.data.token
@@ -34,7 +34,6 @@ test('add organize', async t => {
         code: CODE.NORMAL,
         msg: ''
     }
-    const organize = new Organize(toBeAddOrganize)
-    const result = await organize.add()
-    t.deepEqual(result, expectResult)
+    const result = await Organize.add(toBeAddOrganize)
+    t.is(result.code, expectResult.code)
 })

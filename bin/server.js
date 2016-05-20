@@ -25,7 +25,8 @@ const middleware = webpackMiddleware(compiler, {
 
 app.use(middleware);
 app.use(webpackHotMiddleware(compiler));
-app.use(express.static(path.join(__dirname,'../', '/static')));
+// app.use(express.static(path.join(__dirname,'../', '/static')));
+app.use(express.static(path.join(__dirname,'../')))
 app.get('*', function response(req, res) {
     res.write(middleware.fileSystem.readFileSync(path.join(__dirname,'../', '/dist/index.html')));
     res.end();
