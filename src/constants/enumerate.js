@@ -22,3 +22,9 @@ export const RESULT = {
 	code : CODE.INIT,
 	msg : INIT_MSG
 }
+export const EXPECT_RESULT = {
+	code : CODE.NORMAL,
+	msg : ''
+}
+
+export const LIMIT = 9

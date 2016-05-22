@@ -17,30 +17,36 @@ class App extends React.Component {
 		avatarStyle:{
 			margin:5
 		},
+		appBar:{
+			position:'fixed',
+			top:0
+		},
 		contentStyle: {
 	        // margin: spacing.desktopGutter,
-	        marginLeft : 300
+	        marginLeft : 300,
+			paddingTop:getMuiTheme().appBar.height
 	     }
 	}
 	render(){
-		const avatar = (
-			<div>
-				<span>ruofan</span>
-				<Avatar
-					icon = {<i className='fa fa-user' />}
-					style = { this.styles.avatarStyle }
-					backgroundColor = {pink400}
-					size = {40}
-				/>
-            </div>
-			)
+		// const avatar = (
+		// 	<div>
+		// 		<span>ruofan</span>
+		// 		<Avatar
+		// 			icon = {<i className='fa fa-user' />}
+		// 			style = { this.styles.avatarStyle }
+		// 			backgroundColor = {pink400}
+		// 			size = {40}
+		// 		/>
+        //     </div>
+		// 	)
 		return (
 			<MuiThemeProvider muiTheme={getMuiTheme()}>
 				<div>			
 					<AppBar 
 						title = '管理后台'
 						showMenuIconButton = {false}
-						iconElementRight = {avatar}
+						style={this.styles.appBar}
+						// iconElementRight = {avatar}
 					/>
 					<AppNavDrawer
 						location = {this.props.location}

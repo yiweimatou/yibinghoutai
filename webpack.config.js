@@ -12,7 +12,15 @@ const webpackConfig = {
         debug: true,
         resolve: {
             root: path.join(__dirname, 'src'),
-            extensions: ['', '.js', '.jsx', '.json', '.css']
+            extensions: ['', '.js', '.jsx', '.json', '.css'],
+            alias:{
+                component:path.join(__dirname,'src','components'),
+                pages:path.join(__dirname,'src/components/pages'),
+                constants:path.join(__dirname,'src/constants'),
+                models:path.join(__dirname,'src/models'),
+                utils:path.join(__dirname,'src/utils'),
+                
+            }            
         },
         module: {}
     }
@@ -23,7 +31,7 @@ const APP_ENTRY_PATH = path.join(__dirname, 'src') + '/client.js'
 webpackConfig.entry = {
     app: __DEV__ ? [
         APP_ENTRY_PATH,
-        'webpack-hot-middleware/client?path=__webpack_hmr'
+        'webpack-hot-middleware/client?path=/__webpack_hmr'
     ] : APP_ENTRY_PATH,
     vendor: [
         'react',
@@ -38,7 +46,7 @@ webpackConfig.entry = {
 webpackConfig.output = {
     filename: '[name].[hash].js',
     path: path.join(__dirname, 'dist'),
-    publicPath: ''
+    publicPath: '/'
 }
 
 // ------------------------------------
@@ -88,14 +96,8 @@ if (__DEV__) {
 
 // Don't split bundles during testing, since we only want import one bundle
 webpackConfig.plugins.push(
-    new webpack.optimize.CommonsChunkPlugin({
-        names: ['vendor'],
-        minChunks:Infinity
-    }, new webpack.ProvidePlugin({
-        React: 'react',
-        'window.React': 'react'
-    })))
-
+    new webpack.optimize.CommonsChunkPlugin('vendor','vendor.bundle.js')
+)
 // ------------------------------------
 // Loaders
 // ------------------------------------

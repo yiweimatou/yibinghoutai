@@ -1,7 +1,6 @@
 import React from 'react'
 import App from '../components/App.js'
 import Admin from '../models/Admin.js'
-import Home from '../components/pages/Home'
 
 const requireAuth = (nextState, replace) => {
 	if (!Admin.loggedIn()) {
@@ -19,11 +18,10 @@ const Routes = {
 		require('./login.js'), {
 			path: '/',
 			component: App,
-			indexRoute:require('./home.js'),//{ component:Home },
-			onEnter:requireAuth,
+			indexRoute: require('./home.js'),
+			onEnter: requireAuth,
 			childRoutes: [
-				require('./organize/index.js'),
-				{
+				require('./organize/index.js'), {
 					path: '*',
 					component: require('../components/pages/PageNotFound.js')
 				}
