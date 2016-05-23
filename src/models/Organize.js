@@ -103,34 +103,40 @@ class Organize {
 		})
 
 	}
-	static remove(key, token, oid) {
-		if (isEmpty(key) || isEmpty(token) || isEmpty(oid)) {
-			return Object.assign({}, RESULT, {
-				msg: EMPTY
-			})
-		}
-		return fetch(`${config.api}organize/del?key=${key}&token=${token}&oid=${oid}`, {
-			method: 'DELETE'
-		}).catch(error=>{
-			return Promise.reject(Object.assign({}, RESULT, {
-				msg: error.message
-			}))
-		}).then(response => {
-			return response.ok ? response.json() : Promise.reject(Object.assign({}, RESULT, {
-				msg: response.statusText
-			}))
-		}).catch(error=>{
-			return error
-		}).then(data => {
-			return data.code === CODE.NORMAL ?
-				Object.assign({}, RESULT, {
-					code: CODE.NORMAL,
-					msg: ''
-				}) : Object.assign({}, RESULT, {
-					msg: data.msg
-				})
-		})
-	}
+	// static remove(key, token, oid) {
+	// 	if (isEmpty(key) || isEmpty(token) || isEmpty(oid)) {
+	// 		return Object.assign({}, RESULT, {
+	// 			msg: EMPTY
+	// 		})
+	// 	}
+	// 	return fetch(`${config.api}organize/del`, {
+	// 		method: 'DELETE',
+	// 		body: object2string({
+	// 			key: key,
+	// 			token: token,
+	// 			oid: oid
+	// 		}),
+	// 		mode: 'cors'
+	// 	}).catch(error => {
+	// 		return Promise.reject(Object.assign({}, RESULT, {
+	// 			msg: error.message
+	// 		}))
+	// 	}).then(response => {
+	// 		return response.ok ? response.json() : Promise.reject(Object.assign({}, RESULT, {
+	// 			msg: response.statusText
+	// 		}))
+	// 	}).catch(error => {
+	// 		return error
+	// 	}).then(data => {
+	// 		return data.code === CODE.NORMAL ?
+	// 			Object.assign({}, RESULT, {
+	// 				code: CODE.NORMAL,
+	// 				msg: ''
+	// 			}) : Object.assign({}, RESULT, {
+	// 				msg: data.msg
+	// 			})
+	// 	})
+	// }
 	static info(queryArgs) {
 		const queryString = object2string(queryArgs)
 		return fetch(`${config.api}organize/info?${queryString}`).then(response => {

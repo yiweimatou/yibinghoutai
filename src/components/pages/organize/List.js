@@ -1,12 +1,19 @@
 import React from 'react'
 import {
-    Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, Paper,IconButton
+    Table, 
+    TableBody, 
+    TableHeader, 
+    TableHeaderColumn, 
+    TableRow, 
+    TableRowColumn, 
+    Dialog,IconButton,RaisedButton
 }
   from 'material-ui'
 import {ActionDelete,EditorModeEdit} from 'material-ui/svg-icons'
 import PagingTableFooter from '../../PagingTableFooter.js'
 import {red500,blue500,lightBlue50} from 'material-ui/styles/colors'
 import Organize from 'models/Organize'
+import Edit from './Edit.js'
 import {
     CODE,
     LIMIT,
@@ -14,9 +21,6 @@ import {
 } from 'constants/enumerate'
 
 const styles = {
-    paper:{
-        margin: 20
-    },
     toolbar:{
         float:'right'
     },
@@ -33,7 +37,9 @@ class List extends React.Component{
             total:0,
             rowid:-1,
             id:localStorage.id||sessionStorage.id,
-            token:localStorage.token||sessionStorage.token
+            token:localStorage.token||sessionStorage.token,
+            open:false,
+            selected:{}
         }
     }
     componentWillMount(){        
@@ -67,7 +73,18 @@ class List extends React.Component{
             }
         })   
     }
-    
+    handleOpen = () => {
+        this.setState({open: true});
+    }
+    handleClose = () => {
+        this.setState({open: false});
+    }
+    edit = () => {
+        this.handleOpen()
+        this.setState({
+            selected:this.state.data[this.state.rowid]
+        })
+    }
     rowSelection = (index) => {
         if(index.length === 0){
             this.state = Object.assign({},this.state,{rowid:-1})
@@ -76,31 +93,26 @@ class List extends React.Component{
             this.state=Object.assign({},this.state,{rowid:index[0]+(this.state.offset-1)*LIMIT})
         }
     }
-    async remove(){
-        if(this.state.rowid === -1){
-            console.log('please select one to remove!')
-        }
-        else{
-            const res = await Organize.remove(this.state.id,this.state.token,this.state.data[this.state.rowid].oid)
-            if(res.code === CODE.NORMAL){
-                this.setState({
-                    selected:-1,
-                    data:data.splice(this.state.rowid-1,1)
-                })
-                console.log(this.state.rowid+'removed!')
-            }else{
-                console.log(res.msg)
-            }
-        }
-    }
     pagingFillter(item,index){
         let start = (this.state.offset-1)*LIMIT
         let end = start+LIMIT
         return index>=start && index <=end
     }
     render(){
+        const actions = [
+            <RaisedButton
+                label="取消"
+                onTouchTap={this.handleClose}
+                style = {{marginRight:10}}
+            />,
+            <RaisedButton
+                label="确定"
+                primary={true}
+                onTouchTap={this.handleClose}
+            />,
+        ]
         return (
-            <Paper style = {styles.paper}>
+                <div>
                     <Table
                         fixedHeader={true}
                         selectable={true}
@@ -112,14 +124,11 @@ class List extends React.Component{
                             <TableRow style={styles.row}>
                                 <TableHeaderColumn colSpan="3">
                                     <div style={{float:'right'}}>
-                                        <IconButton>
-                                            <EditorModeEdit color={blue500}/>
-                                        </IconButton>
-                                        <IconButton 
-                                            onTouchTap = {this.remove.bind(this)}
-                                        >
-                                            <ActionDelete color = {red500} />
-                                        </IconButton>                                    
+                                        <IconButton onTouchTap = {this.edit}>
+                                            <EditorModeEdit
+                                                color={blue500}
+                                            />
+                                        </IconButton>                                  
                                     </div>
                                 </TableHeaderColumn>
                             </TableRow>
@@ -151,7 +160,16 @@ class List extends React.Component{
                             total = {this.state.total}
                         />
                 </Table>
-            </Paper>
+                <Dialog
+                    actions={actions}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
+                    autoScrollBodyContent={true}
+                >
+                    <Edit organize={this.state.selected}/>
+                </Dialog>
+            </div>
         )
     }
 }

@@ -4,15 +4,46 @@ import {
 	MuiThemeProvider,
 	spacing
 } from 'material-ui/styles'
-import Avatar from 'material-ui/Avatar'
 import AppNavDrawer from './AppNavDrawer'
-import AppBar from 'material-ui/AppBar'
+import {Dialog,RaisedButton,AppBar,Snackbar,Paper} from 'material-ui'
 import {pink400} from 'material-ui/styles/colors'
 
 class App extends React.Component {
+	constructor(){
+		super(...arguments)
+		this.state = {
+			open:false,
+			message:'',
+			noticeOpen:false,
+			notice:''
+		}
+		if(window.Alert === undefined){
+			window.Alert = this.alert.bind(this)
+		}		
+		if(window.Notice === undefined){
+			window.Notice = this.notice.bind(this)
+		}
+	}	
 	static propTypes = {
 		children:React.PropTypes.node
 	}
+	alert(message){
+		this.setState({
+			open:true,
+			message:message
+		})
+	}
+	notice(message){
+		this.setState({
+			noticeOpen:true,
+			notice:message
+		})
+	}
+	handleClose = () =>{
+        this.setState({
+            open:false
+        })
+    }
 	styles = {
 		avatarStyle:{
 			margin:5
@@ -25,20 +56,23 @@ class App extends React.Component {
 	        // margin: spacing.desktopGutter,
 	        marginLeft : 300,
 			paddingTop:getMuiTheme().appBar.height
-	     }
+	    },
+		paper:{
+			margin:20,
+			padding:20
+		}
+	}
+	handleRequestClose = ()=>{
+		this.closeSnackbar()
 	}
 	render(){
-		// const avatar = (
-		// 	<div>
-		// 		<span>ruofan</span>
-		// 		<Avatar
-		// 			icon = {<i className='fa fa-user' />}
-		// 			style = { this.styles.avatarStyle }
-		// 			backgroundColor = {pink400}
-		// 			size = {40}
-		// 		/>
-        //     </div>
-		// 	)
+		const actions = [
+            <RaisedButton
+                label="确定"
+                primary={true}
+                onTouchTap={this.handleClose}
+            />,
+        ]
 		return (
 			<MuiThemeProvider muiTheme={getMuiTheme()}>
 				<div>			
@@ -52,8 +86,26 @@ class App extends React.Component {
 						location = {this.props.location}
 					 />
 					<div style = {this.styles.contentStyle}>
-						{this.props.children}
+						<Paper style = {this.styles.paper}>
+							{this.props.children}
+						</Paper>
 					</div>
+					<Dialog
+						actions={actions}
+						modal={false}
+						open={this.state.open}
+						onRequestClose={this.handleClose}
+					>
+						{this.state.message}
+					</Dialog>
+					<Snackbar
+				          open={this.state.noticeOpen}
+				          message={this.state.notice}
+				          action="知道了"
+				          autoHideDuration={3000}
+				          onActionTouchTap={this.handleRequestClose}
+				          onRequestClose={this.handleRequestClose}
+				     />
 				</div>
 			</MuiThemeProvider>
 			)
