@@ -1,33 +1,40 @@
-import React from 'react'
-import App from '../components/App.js'
-import Admin from '../models/Admin.js'
+import LoginRoute from './login'
+import home from './home'
+import App from '../components/App'
+import { AUTHENTICATED } from '../constants/actiontypes/auth'
+import { replace } from 'react-router-redux'
+import MainContainer from '../containers/MainContainer'
+import organize from './organize'
 
-const requireAuth = (nextState, replace) => {
-	if (!Admin.loggedIn()) {
-		replace({
-			pathname: '/login',
-			state: {
-				nextPathname: nextState.location.pathname
-			}
-		})
-	}
-}
-const Routes = {
-	component: 'div',
-	childRoutes: [
-		require('./login.js'), {
-			path: '/',
-			component: App,
-			indexRoute: require('./home.js'),
-			onEnter: requireAuth,
-			childRoutes: [
-				require('./organize/index.js'), {
-					path: '*',
-					component: require('../components/pages/PageNotFound.js')
-				}
-			]
-		}
-	]
-}
+const routes = store => ({
+    component: App,
+    childRoutes: [
+        LoginRoute, {
+            path: '/',
+            component: MainContainer,
+            indexRoute: {
+                component: require('../components/pages/Home').default
+            },
+            onEnter(nextState) {
+                if (store.getState().auth.status !== AUTHENTICATED) {
+                    store.dispatch(replace({
+                        pathname: '/login',
+                        state: {
+                            nextPathname: nextState.location.pathname
+                        }
+                    }))
+                }
+            },
+            childRoutes: [
+                home, 
+                organize,
+                {
+                    path: '*',
+                    component: require('../components/pages/PageNotFound').default
+                }
+            ]
+        }
+    ]
+})
 
-export default Routes
+export default routes

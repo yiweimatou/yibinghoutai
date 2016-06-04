@@ -161,13 +161,12 @@ class List extends React.Component{
                         />
                 </Table>
                 <Dialog
-                    actions={actions}
                     modal={false}
                     open={this.state.open}
                     onRequestClose={this.handleClose}
                     autoScrollBodyContent={true}
                 >
-                    <Edit organize={this.state.selected}/>
+                    <Edit organize={this.state.selected} close={this.handleClose.bind(this)}/>
                 </Dialog>
             </div>
         )

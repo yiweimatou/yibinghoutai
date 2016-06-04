@@ -1,15 +1,13 @@
 import React from 'react'
-import Formsy from 'formsy-react'
 import {
-    FormsyText,
-    FormsySelect
-} from 'formsy-material-ui/lib'
+    Field
+} from 'redux-form'
 import {
-    MenuItem,
     RaisedButton,
-    TextField
+    MenuItem
 } from 'material-ui'
-import {ORGANIZE_STATE} from 'constants/enumerate'
+import TextField from '../../ReduxForm/TextField'
+import SelectField from '../../ReduxForm/SelectField'
 
 const styles = {
     form:{
@@ -17,8 +15,11 @@ const styles = {
         flexFlow:'column wrap',
         alignItems:'center'
     },
-    text:{
+    item:{
         width:'70%'
+    },
+    margin:{
+        marginLeft:20
     },
     div:{
         display:'flex',
@@ -29,7 +30,7 @@ const styles = {
         display:'flex',
         width:'70%',
         flexFlow:'row wrap',
-        justifyContent:'flex-end',
+        // justifyContent:'flex-end',
         marginTop:30
     },
     url:{
@@ -46,84 +47,76 @@ const styles = {
     }
 }
 class Add extends React.Component {
-    state = {
-        canSubmit:false
-    }
-    submitForm = (data)=>{
-        
-    }
-    handleFileChange = ()=>{
-        
-    }
-    handleChooseFileClick = ()=>{
-        setTimeout(() => {
-            this.refs.logoFile.click();
-        }, 200);
-    }
     render(){
+        const {
+            handleSubmit,submitting,invalid,reset
+        } = this.props
         return (
-                <Formsy.Form
-                    style = {styles.form}
-                    onValidSubmit = {this.submitForm}
-                    onInvalidSubmit = {Notice}
+            <form onSubmit = { handleSubmit } style = { styles.form}>
+                <Field name = 'oname' 
+                    type = 'text'
+                    hintText = '机构名称'
+                    floatingLabelText = '机构名称'
+                    component = {TextField}
+                    style = { styles.item }
+                />
+                <Field name = 'mobile' 
+                    type = 'text'
+                    hintText = '管理员手机号码'
+                    floatingLabelText = '管理员手机号码'
+                    component = {TextField}
+                    style = { styles.item }
+                />
+                <Field name = 'logo' 
+                    type = 'text'
+                    hintText = 'logoURL地址'
+                    floatingLabelText = 'logoURL地址'
+                    component = {TextField}
+                    style = { styles.item }
+                />
+                <Field name = 'state'
+                    component = { SelectField }
+                    style = { styles.item }
+                    value = { 1 }
+                    hintText = '机构状态'
+                    floatingLabelText = '机构状态'
                 >
-                    <FormsyText
-                        style={styles.text}
-                        name = 'oname'
-                        validationError = '请输入机构名称'
-                        required
-                        hintText = '请输入机构名称'
-                        floatingLabelText = '机构名称'
+                    <MenuItem value="1" primaryText="正常"/>
+                    <MenuItem value="2" primaryText="冻结"/>
+                    <MenuItem value="3" primaryText="永久冻结"/>
+                </Field>
+                <Field name = 'descript'
+                    hintText = '机构简介'
+                    floatingLabelText = '机构简介'
+                    component = { TextField }
+                    multiLine = { true }
+                    rows = { 2 }
+                    style = { styles.item }
+                />
+                <div style = {styles.submit}>
+                    <RaisedButton
+                        type = 'submit'
+                        label = '提交'
+                        primary = { true }
+                        disabled = { submitting||invalid }
                     />
-                    <FormsyText
-                        style = {styles.text}
-                        name = 'descript'
-                        hintText = '请输入机构简介'
-                        floatingLabelText = '机构简介'
+                    <RaisedButton
+                        label = '取消'
+                        onClick = { reset }
+                        style = { styles.margin }
                     />
-                    <div style={styles.div}>
-                        <div>
-                            <input
-                                type="file" ref = 'logoFile' style ={styles.input} 
-                                onChange={this.handleFileChange.bind(this)}
-                            />
-                            <label htmlFor="file">
-                                <RaisedButton label="选择logo文件" onTouchTap={this.handleChooseFileClick}/>
-                            </label>
-                            <RaisedButton style={{marginLeft:20}} label = '上传LOGO' secondary={true}/>
-                        </div>
-                        <FormsyText
-                            style = {styles.url}
-                            name = 'logo'
-                            ref = 'logoUrl'
-                            hintText = '请输入机构logo'
-                            validationError = '请输入有效的URL地址'
-                            validations="isUrl"
-                            required
-                            floatingLabelText = '机构logo'
-                        />
-                    </div>
-                    <FormsySelect
-                        style = {styles.text}
-                        name = 'state'
-                        value = {ORGANIZE_STATE.NORMAL}
-                        floatingLabelText = '选择机构状态'
-                    >
-                        <MenuItem value = {ORGANIZE_STATE.NORMAL} primaryText="正常"/>
-                        <MenuItem value = {ORGANIZE_STATE.FREEZE} primaryText="冻结"/>
-                        <MenuItem value = {ORGANIZE_STATE.FOREVER_FREEZE} primaryText="永久冻结"/>
-                    </FormsySelect>
-                    <div style = {styles.submit}>
-                        <RaisedButton
-                            type = 'submit'
-                            label = '确定提交'
-                            primary = {true}
-                            disable = {!this.state.canSubmit}
-                        />
-                    </div>
-                </Formsy.Form>
+                </div>
+            </form>
         )
     }
 }
 
-module.exports = Add
+Add.propTypes = {
+    handleSubmit:React.PropTypes.func.isRequired,
+    submitting:React.PropTypes.bool.isRequired,
+    reset:React.PropTypes.func.isRequired,
+    invalid:React.PropTypes.bool.isRequired,
+    error:React.PropTypes.string
+}
+
+export default Add

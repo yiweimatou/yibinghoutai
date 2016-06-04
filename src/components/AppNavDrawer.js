@@ -1,40 +1,33 @@
 import React from 'react'
-import {withRouter} from 'react-router'
 import Drawer from 'material-ui/Drawer'
-import {List, ListItem, MakeSelectable} from 'material-ui/List'
+import { List, ListItem, MakeSelectable } from 'material-ui/List'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
 const SelectableList = MakeSelectable(List)
+const styles = {
+    containerStyle :{
+        marginTop:getMuiTheme().appBar.height,
+        zIndex:getMuiTheme().zIndex.appBar - 1
+    },
+    listStyle:{
+        paddingTop:'0px'
+    }
+}
 
 class AppNavDrawer extends React.Component{
-	constructor(){
-		super(...arguments)
-	}
-	static propTypes = {
-		location :React.PropTypes.object.isRequired
-	}
-	styles = {
-		containerStyle :{
-			marginTop:getMuiTheme().appBar.height,
-			zIndex:getMuiTheme().zIndex.appBar - 1
-		},
-		listStyle:{
-			paddingTop:'0px'
-		}
-	}
-	handleSelect = (e,value) =>{
-		this.props.router.push(value)
-	}
 	render(){
+        const {
+            open,handleSelect,pathname
+        } = this.props
 		return (
 			<Drawer
-				open= {true}
-				containerStyle = {this.styles.containerStyle}
+				open= {open}
+				containerStyle = {styles.containerStyle}
 			>
 				<SelectableList
-					value = {this.props.location.pathname}
-					onChange = {this.handleSelect}
-					style = {this.styles.listStyle}
+					value = {pathname}
+					onChange = {handleSelect}
+					style = {styles.listStyle}
 				>
 					<ListItem primaryText="后台主页" value="/" />
 					<ListItem 
@@ -43,6 +36,14 @@ class AppNavDrawer extends React.Component{
 						nestedItems = {[
 							<ListItem primaryText = "新增" value = "/organize/add" />,
 							<ListItem primaryText = "列表" value = "/organize/list" />
+						]}			
+					/>
+                    <ListItem 
+						primaryText="用户管理" 
+						primaryTogglesNestedList = {true}
+						nestedItems = {[
+							<ListItem primaryText = "新增" value = "/user/add" />,
+							<ListItem primaryText = "列表" value = "/user/list" />
 						]}			
 					/>
 					<ListItem 
@@ -59,4 +60,9 @@ class AppNavDrawer extends React.Component{
 	}
 }
 
-export default withRouter(AppNavDrawer)
+AppNavDrawer.propTypes = {
+    pathname :React.PropTypes.string.isRequired,
+    handleSelect:React.PropTypes.func.isRequired,
+    open:React.PropTypes.bool.isRequired
+}
+export default AppNavDrawer

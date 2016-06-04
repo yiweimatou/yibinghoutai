@@ -1,8 +1,11 @@
-module.exports = {
-    path:'/login',
-    getComponent(nextState,cb){
-        require.ensure([],(require)=>{
-            cb(null,require('../components/pages/Login.js'))
-        })
+const LoginRoute = ({
+    path: '/login',
+    getComponent (nextState, cb) {
+        require.ensure([], require => {
+            const Login = require('../containers/pages/loginContainer').default
+            cb(null, Login)
+        }, 'login')
     }
-}
+})
+
+export default LoginRoute

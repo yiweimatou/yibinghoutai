@@ -1,0 +1,55 @@
+{
+    "env": {
+        "browser": true,
+        "node": true,
+        "commonjs": true,
+        "es6": true
+    },
+    "parser": "babel-eslint",
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "classes": true,
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        }
+    },
+    "plugins": [
+        "standard",
+        "react"
+    ],
+    "globals": {
+        "__DEV__": true,
+        "__PROD__": false,
+        "__DEBUG__": true
+    },
+    "settings": {
+        "import/parser": "babel-eslint",
+        "import/resolve": {
+            "moduleDirectory": ["node_modules", "src"]
+        }
+    },
+    "rules": {
+        "indent": [
+            0,
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "never"
+        ],
+        "no-console": 0,
+        "no-case-declarations": 0
+    }
+}

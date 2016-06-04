@@ -1,21 +1,19 @@
-const path = require('path');
-const express = require('express');
-const webpack = require('webpack');
-const webpackMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
-const webpackConfig = require('../webpack.config.js');
-const _debug =  require('debug');
+const path = require('path')
+const express = require('express')
+const webpack = require('webpack')
+const webpackMiddleware = require('webpack-dev-middleware')
+const webpackHotMiddleware = require('webpack-hot-middleware')
+const webpackConfig = require('../webpack.config.js')
 
-const debug = _debug('app:server');
-const port = process.env.PORT || 3001;
-const app = express();
+const port = process.env.PORT || 3002
+const app = express()
 
-const compiler = webpack(webpackConfig);
+const compiler = webpack(webpackConfig)
 const middleware = webpackMiddleware(compiler, {
-    publicPath: webpackConfig.output.publicPath,
-    hot:true,
-    historyApiFallback:{
-        index:'/'
+    publicPath : webpackConfig.output.publicPath,
+    hot : true,
+    historyApiFallback  : {
+        index   : '/'
     },
     stats: {
         colors: true,
@@ -25,19 +23,19 @@ const middleware = webpackMiddleware(compiler, {
         chunkModules: false,
         modules: false
     }
-});
+})
 
-app.use(middleware);
-app.use(webpackHotMiddleware(compiler));
-app.use(express.static(path.join(__dirname,'../', '/static')));
+app.use(middleware)
+app.use(webpackHotMiddleware(compiler))
+app.use(express.static(path.join(__dirname, '../', '/static')))
 app.get('*', function response(req, res) {
-    res.write(middleware.fileSystem.readFileSync(path.join(__dirname,'../', '/dist/index.html')));
-    res.end();
-});
+    res.write(middleware.fileSystem.readFileSync(path.join(__dirname, '../', '/dist/index.html')))
+    res.end()
+})
 
-app.listen(port, (err)=> {
+app.listen(port, (err) => {
     if (err) {
-        debug(err);
+        console.error(err)
     }
-    debug(`==> server is now running at http://localhost:${port}/ .`);
-});
+    console.log(`==> server is now running at http://localhost:${port}/ .`)
+})
