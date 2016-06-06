@@ -18,6 +18,7 @@ export const makeRootReducer = asyncReducers => {
     //if user logout reset the state
     if(action.type === LOGOUT_SUCCESS){
       state = undefined
+      localStorage.removeItem('__INITIAL_STATE__')
     }
     return appReducer(state,action)
   }

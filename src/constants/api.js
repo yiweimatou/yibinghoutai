@@ -31,10 +31,10 @@ export const ORGANIZE_DEL_API = `${ADMIN_API_DOMAIN}/organize/del`
 /**
  * user apis
  */
-export const USER_INFO_API = `${USER_API_DOMAIN}/user/info`
-export const USER_GET_API = `${USER_API_DOMAIN}/user/get`
-export const USER_ADD_API = `${USER_API_DOMAIN}/user/add`
-export const USER_LIST_API = `${USER_API_DOMAIN}/user/list`
+export const USER_INFO_API = `${ADMIN_API_DOMAIN}/user/info`
+export const USER_GET_API = `${ADMIN_API_DOMAIN}/user/get`
+export const USER_ADD_API = `${ADMIN_API_DOMAIN}/user/add`
+export const USER_LIST_API = `${ADMIN_API_DOMAIN}/user/list`
 /**
  * area apis
  */

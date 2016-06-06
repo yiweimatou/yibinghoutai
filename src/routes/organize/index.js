@@ -1,11 +1,9 @@
-module.exports = {
-    path : 'organize',
-    getChildRoutes(location,cb){
-        require.ensure([],(require) => {
-            cb(null,[
-                require('./add'),
-                require('./list')
-            ])
-        })
-    }
-}
+const organizeRoute = store => ({
+    path: 'organize',
+    childRoutes: [
+        require('./add'),
+        require('./list').default(store)
+    ]
+})
+
+export default organizeRoute

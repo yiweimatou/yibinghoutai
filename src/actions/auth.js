@@ -10,7 +10,8 @@ import {
     LOGIN_FAIL,
     LOGOUT,
     LOGOUT_SUCCESS,
-    LOGOUT_FAIL
+    LOGOUT_FAIL,
+    AUTHENTICATED
 } from '../constants/actiontypes/auth'
 /**
  * login
@@ -59,6 +60,17 @@ export const login = (account, pwd) => {
                         id: data.key,
                         token: data.token
                     }))
+                    localStorage['__INITIAL_STATE__']
+                    =JSON.stringify({
+                        auth:{
+                            user:{
+                                account:account,
+                                id:data.key,
+                                token:data.token
+                            },
+                            status:AUTHENTICATED
+                        }
+                    })
                     return data
                 } else {
                     throw new Error(data.msg)

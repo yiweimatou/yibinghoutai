@@ -1,6 +1,8 @@
 import fetch from 'isomorphic-fetch'
 import {
-    USER_GET_API,USER_INFO_API
+    USER_GET_API,
+    USER_ADD_API,
+    USER_INFO_API
 } from 'constants/api'
 import {
     object2string
@@ -36,6 +38,22 @@ export const info = (args) => {
         })
 }
 
-export const add  = (user) => {
-    return fetch(``)
+export const add = (user) => {
+    return fetch(`${USER_ADD_API}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: object2string(user)
+    }).then(response => {
+        if (response.ok) {
+            return response.json()
+        } else {
+            throw new Error(response.statusText)
+        }
+    }).then(data => data).catch(error => {
+        return {
+            msg: error.message
+        }
+    })
 }

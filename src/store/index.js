@@ -5,15 +5,15 @@ import {
 } from 'redux'
 import { routerMiddleware } from 'react-router-redux'
 import thunk from 'redux-thunk'
-import persistState from 'redux-localstorage'
-import adapter from 'redux-localstorage/lib/adapters/localStorage'
+// import persistState from 'redux-localstorage'
+// import adapter from 'redux-localstorage/lib/adapters/localStorage'
 // import logger from 'redux-logger'
 import makeRootReducer from './reducers'
 
 export default (initialState = {}, history) => {
     const middleware = [thunk, routerMiddleware(history)]
     const enhancers = []
-    enhancers.push(persistState(adapter(window.localStorage), '__INITIAL_STATE__'))
+    // enhancers.push(persistState(adapter(window.localStorage), '__INITIAL_STATE__'))
     if (__DEV__) {
         // middleware.push(logger())
         const devToolsExtension = window.devToolsExtension

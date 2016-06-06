@@ -1,11 +1,6 @@
 import React from 'react'
-import {
-    Field
-} from 'redux-form'
-import {
-    RaisedButton,
-    MenuItem
-} from 'material-ui'
+import { Field } from 'redux-form'
+import { RaisedButton, MenuItem } from 'material-ui'
 import TextField from '../../ReduxForm/TextField'
 import SelectField from '../../ReduxForm/SelectField'
 

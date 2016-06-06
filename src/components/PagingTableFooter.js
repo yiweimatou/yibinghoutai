@@ -1,5 +1,5 @@
-import React from 'react';
-import {TableRow, TableRowColumn, IconButton} from 'material-ui';
+import React from 'react'
+import {TableRow, TableRowColumn, IconButton} from 'material-ui'
 import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left'
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right'
 
@@ -12,7 +12,7 @@ const styles = {
     paddingTop: 16,
     height: 16
   }
-};
+}
 
 class PagingTableFooter extends React.Component{
 
@@ -24,12 +24,14 @@ class PagingTableFooter extends React.Component{
   }
 
   render() {
-        let {offset, total, limit} = this.props
+        let {offset, total, limit,onPageClick} = this.props
         return (
             <tfoot>
               <TableRow>
                 <TableRowColumn style={styles.footerContent}>
-                    <IconButton disabled={offset === 1} onClick={this.props.onPageClick.bind(null, offset - 1)}>
+                    <IconButton disabled={offset === 1} 
+                      onClick={ onPageClick.bind(null, offset - 1, limit) }
+                    >
                       <NavigationChevronLeft />
                     </IconButton>
                     <IconButton disabled={offset * limit >= total} onClick={this.props.onPageClick.bind(null, offset + 1)}>
