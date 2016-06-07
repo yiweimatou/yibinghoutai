@@ -73,7 +73,7 @@ class Main extends React.Component {
                 <Snackbar
                     open = { !dismiss }
                     message = { errorMessage }
-                    action="知道了"
+                    action="确定"
                     onActionTouchTap={ handleActionTouchTap }
                 />
             </div>

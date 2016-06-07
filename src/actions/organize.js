@@ -4,6 +4,7 @@ import {
     ORGANIZE_LIST_API,
     ORGANIZE_INFO_API,
     ORGANIZE_EDIT_API,
+    ORGANIZE_GET_API,
     OK
 } from 'constants/api'
 import { object2string } from '../utils/convert'
@@ -22,6 +23,10 @@ export const UPDATE_ORGANIZE_TOTAL = 'UPDATE_ORGANIZE_TOTAL'
 export const REMOVE_ORGANIZE_REQUEST = 'REMOVE_ORGANIZE_REQUEST'
 export const REMOVE_ORGANIZE_SUCCESS = 'REMOVE_ORGANIZE_SUCCESS'
 export const REMOVE_ORGANIZE_FAILURE = 'REMOVE_ORGANIZE_FAILURE'
+
+export const GET_ORGANIZE_REQUEST = 'GET_ORGANIZE_REQUEST'
+export const GET_ORGANIZE_SUCCESS = 'GET_ORGANIZE_SUCCESS'
+export const GET_ORGANIZE_FAILURE = 'GET_ORGANIZE_FAILURE'
 
 export const add = (key, token, organize) => {
     return fetch(ORGANIZE_ADD_API, {
@@ -59,7 +64,7 @@ export const list = (key,token,args) => {
 }
 
 export const info = (key,token,args) => {
-    return fetch(`${ORGANIZE_INFO_API}?key=${key}&token=${token}&${object2string(args)}`)
+    return fetch(`${ORGANIZE_INFO_API}?key=${key}&token=${token}${object2string(args)}`)
     .then(response => {
         if (response.ok) {
             return response.json()
@@ -95,45 +100,29 @@ export const fetchListFailure = (errorMessage) => {
     }
 }
 
-export const fetchList = (key,token,args) => {
-    return dispatch => {
+export const fetchList = (args) => {
+    return (dispatch,getState) => {
         startFetchList()
-        return list(key,token,args).then( data => {
+        const user = getState().auth.user
+        list(user.id,user.token,args).then( data => {
             if(data.code === OK){
                 return dispatch(fetchListSuccess(data,args.offset || 1))
             }else{
                 return dispatch(fetchListFailure(data.msg))
             }
         })
-    }
-    
+    }   
 }
 
-const shouldFetchList = (key,token,organizeList,args) => {
-    return info(key,token,args).then(info => {
-        if(info.code === OK){
-            return {
-                should:organizeList.lastFetchTime < info.timestamp,
-                count:info.count
-            }
-        }else{
-            return {
-                should:false
-            }
-        }
-    })
-}
-
-export const fetchListIfNeeded = (args) => {
+export const fetchInfo = (args) => {
     return (dispatch,getState) => {
         const user = getState().auth.user
-        shouldFetchList(user.id,user.token,getState().organize,args).then(info=>{
-            if(info.should){
-                dispatch({
+        info(user.id,user.token,args).then(data => {
+            if(data.code === OK){
+               dispatch({
                     type:UPDATE_ORGANIZE_TOTAL,
-                    total:info.count
+                    count:data.count
                 })
-                return dispatch(fetchList(user.id,user.token,args))
             }
         })
     }
@@ -174,7 +163,7 @@ export const removeRequest = oid => {
         //     type:REMOVE_ORGANIZE_REQUEST
         // })
         const user = getState().auth.user
-        remove(user.id,user.token,oid).then(data => {
+        return remove(user.id,user.token,oid).then(data => {
             if(data.ok){
                 dispatch({
                     type:REMOVE_ORGANIZE_SUCCESS,
@@ -190,4 +179,95 @@ export const removeRequest = oid => {
             }
         })
     }
+}
+
+export const get = (key,token,args) => {
+    return fetch(`${ORGANIZE_GET_API}?${object2string(args)}&key=${key}&token=${token}`)
+    .then(response => {
+        if(response.ok){
+            return response.json()
+        }else{
+            throw new Error(response.statusText)
+        }
+    }).then(data => data)
+    .catch(error => {
+        return {
+            code:-1,
+            msg:error.message
+        }
+    })
+}
+
+export const startGet = () => {
+    return {
+        type:GET_ORGANIZE_REQUEST
+    }
+}
+
+export const getSuccess = organize => {
+    return {
+        type:GET_ORGANIZE_SUCCESS,
+        organize
+    }
+}
+
+export const getFailure = message => {
+    return {
+        type:GET_ORGANIZE_FAILURE,
+        message
+    }
+}
+
+export const getOrganizeIfNeeded = args => {
+    return (dispatch,getState) => {
+        const organize = getState().organize
+        if(organize.detail && organize.detail.oid === args.oid){
+            return 
+        }
+        const detail = organize.list.find(item=>{
+            return item.oid===args.oid
+        })
+        if(detail){
+            return dispatch(getSuccess(detail))
+        }
+        const user = getState().auth.user
+        dispatch(startGet())
+        return get(user.id,user.token,args).then(data=>{
+            if(data.code === OK && data.get.oid > 0){
+                return dispatch(getSuccess(data.get))
+            }else{
+                throw new Error(data.msg || '找不到该机构')
+            }
+        }).catch(error => {
+            return dispatch(getFailure(error.message))
+        })
+    }
+}
+
+export const edit = (key,token,args) => {
+    return fetch(`${ORGANIZE_EDIT_API}`,{
+        method:'PUT',
+        headers:{
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body:`${object2string(args)}&key=${key}&token=${token}`
+    }).then(response => {
+            if(response.ok){
+                return response.json()
+            }else{
+                throw new Error(response.statusText)
+            }
+    }).then(data => {
+        if(data.code === OK){
+            return {
+                ok:true
+            }
+        }else{
+            throw new Error(data.msg)
+        }
+    }).catch(error => {
+        return {
+            msg:error.message
+        }
+    })
 }

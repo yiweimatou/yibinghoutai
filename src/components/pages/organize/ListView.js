@@ -5,13 +5,12 @@ import {
     TableHeader, 
     TableHeaderColumn, 
     TableRow, 
-    TableRowColumn, 
-    Dialog,IconButton,RaisedButton
+    TableRowColumn, IconButton
 }
   from 'material-ui'
-import {ActionDelete,EditorModeEdit} from 'material-ui/svg-icons'
+import {ActionDelete,EditorModeEdit,ActionInfo} from 'material-ui/svg-icons'
 import PagingTableFooter from '../../PagingTableFooter.js'
-import {red500,blue500,lightBlue50} from 'material-ui/styles/colors'
+import {red500,blue500,lightBlue50,cyan500} from 'material-ui/styles/colors'
 
 const styles = {
     toolbar:{
@@ -37,8 +36,11 @@ class ListView extends React.Component{
             }
         }
     }
-    handleDel = ()=> {
+    handleDel = () => {
         this.props.deleteHandler(this.state.oid)
+    }
+    handleDetail = () => {
+        this.props.detailHandler(this.state.oid)
     }
     handleEdit = () => {
         this.props.editHandler(this.state.oid)
@@ -71,6 +73,11 @@ class ListView extends React.Component{
                                     <IconButton onTouchTap = { this.handleEdit }>
                                         <EditorModeEdit
                                             color={blue500}
+                                        />
+                                    </IconButton>
+                                    <IconButton onTouchTap = { this.handleDetail } >
+                                        <ActionInfo
+                                            color = { cyan500 }
                                         />
                                     </IconButton>                                  
                                 </div>
@@ -116,7 +123,8 @@ ListView.propTypes = {
     limit:React.PropTypes.number.isRequired,
     onPageClick:React.PropTypes.func.isRequired,
     total:React.PropTypes.number.isRequired,
-    deleteHandler:React.PropTypes.func.isRequired
+    deleteHandler:React.PropTypes.func.isRequired,
+    detailHandler:React.PropTypes.func.isRequired
 }
 
 export default ListView

@@ -3,17 +3,20 @@ import {
     FETCH_ORGANIZE_LIST_SUCCESS,
     FETCH_ORGANIZE_LIST_FAILURE,
     UPDATE_ORGANIZE_TOTAL,
-    REMOVE_ORGANIZE_SUCCESS
+    REMOVE_ORGANIZE_SUCCESS,
+    GET_ORGANIZE_REQUEST,
+    GET_ORGANIZE_SUCCESS,
+    GET_ORGANIZE_FAILURE
 } from 'actions/organize'
 
 const initalState = {
     list: [],
     loading: false,
-    lastFetchTime: 0,
     errorMessage: '',
     limit:9,
     offset:1,
-    total:0
+    total:0,
+    detail:null
 }
 
 const ACTION_HANDLERS = {
@@ -24,7 +27,6 @@ const ACTION_HANDLERS = {
     [FETCH_ORGANIZE_LIST_SUCCESS]: (state, action) => ({
         ...state,
         loading: false,
-        lastFetchTime: action.lastFetchTime,
         list: action.list,
         offset:action.offset
     }),
@@ -35,15 +37,31 @@ const ACTION_HANDLERS = {
     }),
     [UPDATE_ORGANIZE_TOTAL] : (state,action) => ({
         ...state,
-        total:action.total
+        total:action.count
     }),
     [REMOVE_ORGANIZE_SUCCESS] : (state,action) => ({
       ...state,
-      list:state.list.filter(item => {
-          if(item.oid !== action.oid){
-              return true
+      list:state.list.map(item => {
+          if(item.oid === action.oid){
+                item.state = 3
+                item.oname = item.oid
           }
+          return item
       })  
+    }),
+    [GET_ORGANIZE_REQUEST] : state => ({
+        ...state,
+        loading:true
+    }),
+    [GET_ORGANIZE_FAILURE] : (state,action) => ({
+        ...state,
+        loading:false,
+        errorMessage:action.message
+    }),
+    [GET_ORGANIZE_SUCCESS] : (state,action) => ({
+        ...state,
+        loading:false,
+        detail:action.organize
     })
 }
 

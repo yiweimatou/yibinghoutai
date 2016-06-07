@@ -34,7 +34,7 @@ class PagingTableFooter extends React.Component{
                     >
                       <NavigationChevronLeft />
                     </IconButton>
-                    <IconButton disabled={offset * limit >= total} onClick={this.props.onPageClick.bind(null, offset + 1)}>
+                    <IconButton disabled={offset * limit >= total} onClick={this.props.onPageClick.bind(null, offset + 1,limit)}>
                       <NavigationChevronRight />
                     </IconButton>
                 </TableRowColumn>

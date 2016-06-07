@@ -44,8 +44,8 @@ const mergeProps = (state) => {
                     mobile:values.mobile
                 }).then(data => {
                     if(data.code === OK){
-                        if(data.get.Uid > 0){
-                            return data.get.Uid
+                        if(data.get.uid > 0){
+                            return data.get.uid
                         }else{
                             return addUser({
                                 key:state.key,

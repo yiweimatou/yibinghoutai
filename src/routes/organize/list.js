@@ -1,22 +1,13 @@
 import {
-    fetchListIfNeeded
+    fetchList,fetchInfo
 } from 'actions/organize'
-import {
-    injectReducer
-} from '../../store/reducers.js'
 
 const ListRoute = store => ({
     path: 'list',
     onEnter() {
-        if (store.asyncReducers['organize'] === undefined) {
-            const reducer = require('reducers/organize').default
-            injectReducer(store, {
-                key: 'organize',
-                reducer
-            })
-        }
         const organize = store.getState().organize
-        store.dispatch(fetchListIfNeeded({
+        store.dispatch(fetchInfo())
+        store.dispatch(fetchList({
             limit: organize.limit,
             offset: organize.offset
         }))
