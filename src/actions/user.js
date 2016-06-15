@@ -4,6 +4,7 @@ import {
     USER_ADD_API,
     USER_INFO_API,
     USER_LIST_API,
+    USER_EDIT_API,
     OK
 } from 'constants/api'
 import {
@@ -15,12 +16,16 @@ export const ADD_USER_REQUEST = 'ADD_USER_REQUEST'
 export const ADD_USER_SUCCESS = 'ADD_USER_SUCCESS'
 export const ADD_USER_FAILUIRE = 'ADD_USER_FAILUIRE'
 
-export const USER_LIST_REQUEST = 'USER_LIST_REQUEST' 
+export const USER_LIST_REQUEST = 'USER_LIST_REQUEST'
 export const USER_LIST_SUCCESS = 'USER_LIST_SUCCESS'
 export const USER_LIST_FAILURE = 'USER_LIST_FAILURE'
 
-export const get = (args) => {
-    return fetch(`${USER_GET_API}?${object2string(args)}`)
+export const UPDATE_USER_TOTAL = 'UPDATE_USER_TOTAL'
+export const USER_GET_SUCCESS = 'USER_GET_SUCCESS'
+export const USER_GET_FAILURE = 'USER_GET_FAILURE'
+
+export const get = (key,token,args) => {
+    return fetch(`${USER_GET_API}?key=${key}&token=${token}&${object2string(args)}`)
         .then(response => {
             if (response.ok) {
                 return response.json()
@@ -34,8 +39,52 @@ export const get = (args) => {
         })
 }
 
-export const info = (args) => {
-    return fetch(`${USER_INFO_API}?${object2string(args)}`)
+export const getUserSuccess = (user) =>{
+    return {
+        type:USER_GET_SUCCESS,
+        user
+    }
+}
+
+export const getUserFailure = message => {
+    return {
+        type:USER_GET_FAILURE,
+        message
+    }
+}
+
+export const getUserIfNeeded = args => {
+    return (dispatch,getState) => {
+        const _user = getState().user
+        if(_user.detail && _user.detail.uid === args.uid){
+            return
+        }
+        const detail = _user.list.find( item => {
+            return item.uid === args.uid
+        })
+        if(detail){
+            return dispatch(getUserSuccess(detail))
+        }
+        const user =  getState().auth.user
+        return get(user.id,user.token,args).then(data => {
+            if(data.code === OK && data.get.uid > 0){
+                dispatch(getUserSuccess(data.get))
+                return {
+                    ok:true
+                }
+            }else{
+                throw new Error(data.msg || '找不到该用户')
+            }
+        }).catch(error => {
+             return {
+                 msg: error.message
+             }
+        })
+    }
+}
+
+export const info = (key,token,args) => {
+    return fetch(`${USER_INFO_API}?key=${key}&token=${token}&${object2string(args)}`)
         .then(response => {
             if (response.ok) {
                 return response.json()
@@ -47,6 +96,20 @@ export const info = (args) => {
                 msg: error.message
             }
         })
+}
+
+export const fetchInfo = (args) => {
+    return (dispatch,getState) => {
+        const user = getState().auth.user
+        return info(user.id,user.token,args).then(data => {
+            if(data.code === OK){
+                dispatch({
+                    type:UPDATE_USER_TOTAL,
+                    count:data.count
+                })
+            }
+        })
+    }
 }
 
 export const add = (user) => {
@@ -71,34 +134,44 @@ export const add = (user) => {
 
 export const startAddUser = () => {
     return {
-        type:ADD_USER_REQUEST
+        type: ADD_USER_REQUEST
     }
 }
 
 export const addUserSuccess = () => {
     return {
-        type:ADD_USER_SUCCESS
+        type: ADD_USER_SUCCESS
     }
 }
 
 export const addUserFailure = (message) => {
     return {
-        type:ADD_USER_FAILUIRE,
+        type: ADD_USER_FAILUIRE,
         message
     }
 }
 
 export const addUser = (args) => {
-    return (dispatch,getState) => {
+    return (dispatch, getState) => {
         dispatch(startAddUser())
-        const user =  getState().auth.user
+        const user = getState().auth.user
         args.key = user.id
         args.token = user.token
-        add(args).then( data => {
-            if(data.code === OK){
-                dispatch(addUserSuccess())
-            }else{
-                dispatch(addUserFailure(data.msg || '新建用户失败'))
+        return add(args).then(data => {
+            if (data.code === OK) {
+                // dispatch(addUserSuccess())
+                return {
+                    ok: true
+                }
+            } else {
+                // dispatch(addUserFailure(data.msg || '新建用户失败'))
+                return {
+                    msg: data.msg || '新建用户失败'
+                }
+            }
+        }).catch(error => {
+            return {
+                msg: error.message
             }
         })
     }
@@ -106,42 +179,79 @@ export const addUser = (args) => {
 
 export const startFetchUserList = () => {
     return {
-        type:USER_LIST_REQUEST
+        type: USER_LIST_REQUEST
     }
 }
 
-export const fetchUserListSuccess = (list) => {
+export const fetchUserListSuccess = (list, offset) => {
     return {
-        type:USER_LIST_SUCCESS,
-        list
+        type: USER_LIST_SUCCESS,
+        list,
+        offset
     }
 }
 
 export const fetchUserListFailure = (message) => {
     return {
-        type:USER_LIST_FAILURE,
+        type: USER_LIST_FAILURE,
         message
     }
 }
 export const fetchUserList = (args) => {
-    return (dispatch,getState) => {
+    return (dispatch, getState) => {
         dispatch(startFetchUserList())
         const user = getState().auth.user
-        fetch(`${USER_LIST_API}?${object2string(args)}&key=${user.id}&token=${user.token}`)
+        return fetch(`${USER_LIST_API}?key=${user.id}&token=${user.token}&${object2string(args)}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error(response.statusText)
+                }
+            }).then(data => {
+                if (data.code === OK) {
+                    dispatch(fetchUserListSuccess(data.list, args.offset || 1))
+                } else {
+                    dispatch(fetchUserListFailure(data.msg || '获取列表失败!'))
+                }
+            }).catch(error => {
+                dispatch(fetchUserListFailure(error.message))
+            })
+    }
+}
+
+export const edit = (args) => {
+    return (dispatch,getState) => {
+        const user = getState().auth.user
+        return fetch(`${USER_EDIT_API}`,{
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body:`key=${user.id}&token=${user.token}&${object2string(args)}`
+        })
         .then(response => {
-            if(response.ok){
+            if(response.ok) {
                 return response.json()
             }else{
                 throw new Error(response.statusText)
             }
         }).then(data => {
             if(data.code === OK){
-                dispatch(fetchUserListSuccess(data.list))
+                //update detail state
+                dispatch(getUserSuccess(args))
+                return {
+                    ok:true
+                }
             }else{
-                dispatch(fetchUserListFailure(data.msg || '获取列表失败!'))
+                return {
+                    msg:data.msg
+                }
             }
         }).catch(error => {
-            dispatch(fetchUserListFailure(error.message))
+            return {
+                msg:error.message
+            }
         })
     }
 }

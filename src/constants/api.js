@@ -35,6 +35,7 @@ export const USER_INFO_API = `${ADMIN_API_DOMAIN}/user/info`
 export const USER_GET_API = `${ADMIN_API_DOMAIN}/user/get`
 export const USER_ADD_API = `${ADMIN_API_DOMAIN}/user/add`
 export const USER_LIST_API = `${ADMIN_API_DOMAIN}/user/list`
+export const USER_EDIT_API = `${ADMIN_API_DOMAIN}/user/put`
 /**
  * region apis
  */

@@ -4,6 +4,7 @@ import App from '../components/App'
 import { AUTHENTICATED } from '../constants/actiontypes/auth'
 import MainContainer from '../containers/MainContainer'
 import organizeRoute from './organize'
+import userRoute from './user'
 
 const routes = store => ({
     component: App,
@@ -27,6 +28,7 @@ const routes = store => ({
             childRoutes: [
                 home, 
                 organizeRoute(store),
+                userRoute(store),
                 {
                     path: '*',
                     component: require('../components/pages/PageNotFound').default

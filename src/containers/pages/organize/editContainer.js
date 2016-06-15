@@ -11,9 +11,6 @@ import {
 import {
     edit
 } from 'actions/organize'
-import {
-    connect
-} from 'react-redux'
 
 const validate = values => {
     const errors = {}
@@ -31,33 +28,23 @@ const validate = values => {
     return errors
 }
 
-const mapStateToProps = (state) => {
-    return {
-        key: state.auth.user.id,
-        token: state.auth.user.token
-    }
-}
-
-const mergeProps = state => {
-    return {
-        onSubmit: (values, dispatch) => {
-            return new Promise((resolve, reject) => {
-               edit(state.key, state.token, values)
-                   .then(data => {
-                    if (data.ok) {
-                        resolve(dispatch(addErrorMessage('编辑成功!')))
-                    } else {
-                        return reject(dispatch(addErrorMessage(`编辑失败:${data.msg}`)))
-                    }
-                }).catch(error => {
-                    return reject(dispatch(addErrorMessage(error.message)))
-                })
+const onSubmit = (values, dispatch) => {
+    return new Promise((resolve, reject) => {
+        edit(values)
+            .then(data => {
+                if (data.ok) {
+                    resolve(dispatch(addErrorMessage('编辑成功!')))
+                } else {
+                    return reject(dispatch(addErrorMessage(`编辑失败:${data.msg}`)))
+                }
+            }).catch(error => {
+                return reject(dispatch(addErrorMessage(error.message)))
             })
-        }
-    }
+    })
 }
 
-export default connect(mapStateToProps, null, mergeProps)(reduxForm({
+export default reduxForm({
     form: 'editOrganize',
-    validate
-})(EditView))
+    validate,
+    onSubmit
+})(EditView)

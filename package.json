@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/server.js",
     "test": "./node_modules/.bin/ava",
-    "deploy": "set NODE_ENV=production&&node ./bin/complie"
+    "deploy": "export NODE_ENV=production&&babel-node ./bin/compile"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     ],
     "failFast": true,
     "tap": false,
-    "verbose":true,
+    "verbose": true,
     "require": [
       "babel-core/register",
       "babel-polyfill"
@@ -33,6 +33,7 @@
     "babel": "inherit"
   },
   "dependencies": {
+    "babel-preset-react-optimize": "^1.0.1",
     "bluebird": "^3.4.0",
     "isomorphic-fetch": "^2.2.1",
     "material-ui": "^0.15.0",

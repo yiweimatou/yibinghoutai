@@ -8,8 +8,7 @@ const ListRoute = store => ({
         const organize = store.getState().organize
         store.dispatch(fetchInfo())
         store.dispatch(fetchList({
-            limit: organize.limit,
-            offset: organize.offset
+            limit: organize.limit
         }))
     },
     getComponent(nextState, cb) {

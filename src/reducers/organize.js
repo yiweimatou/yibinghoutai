@@ -61,7 +61,7 @@ const ACTION_HANDLERS = {
     [GET_ORGANIZE_SUCCESS] : (state,action) => ({
         ...state,
         loading:false,
-        detail:action.organize
+        detail:Object.assign({},state.detail,action.organize)
     })
 }
 

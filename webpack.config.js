@@ -14,13 +14,14 @@ const webpackConfig = {
             root: path.join(__dirname, 'src'),
             extensions: ['', '.js', '.jsx', '.json', '.css'],
             alias:{
-                component:path.join(__dirname,'src','components'),
+                components:path.join(__dirname,'src','components'),
                 pages:path.join(__dirname,'src/components/pages'),
                 constants:path.join(__dirname,'src/constants'),
                 reducers:path.join(__dirname,'src/reducers'),
-                actioncreators:path.join(__dirname,'src/actioncreators'),
+                actions:path.join(__dirname,'src/actions'),
                 containers:path.join(__dirname,'src/containers'),
-                utils:path.join(__dirname,'src/utils')
+                utils:path.join(__dirname,'src/utils'),
+                store:path.join(__dirname,'src/store')
             }
         },
         module: {}
@@ -139,9 +140,8 @@ webpackConfig.module.loaders = [{
                 ]
             },
             production: {
-                plugins: [
-                    'transform-react-remove-prop-types',
-                    'transform-react-constant-elements'
+                'presets': [
+                    'react-optimize'
                 ]
             }
         }
