@@ -2,7 +2,8 @@ import fetch from 'isomorphic-fetch'
 import {
     OK,
     ADMIN_LOGIN_API,
-    ADMIN_LOGOUT_API
+    ADMIN_LOGOUT_API,
+    ADMIN_EDIT_API
 } from '../constants/api'
 import {
     LOGIN,
@@ -12,7 +13,35 @@ import {
     LOGOUT_SUCCESS,
     LOGOUT_FAIL,
     AUTHENTICATED
-} from '../constants/actiontypes/auth'
+} from '../constants/ActionTypes'
+import { toastr } from 'react-redux-toastr'
+
+export const changepwd = (oldpwd,pwd) => {
+    return (dispatch,getState) => {
+        const user = getState().auth.user
+        return fetch(ADMIN_EDIT_API,{
+            headers:{
+                'Content-Type':'application/x-www-form-urlencoded'
+            },
+            method:'PUT',
+            body:`key=${user.id}&token=${user.token}&old_pwd=${oldpwd}&pwd=${pwd}`
+        }).then( response => {
+            if( response.ok ){
+                return response.json()
+            }else{
+                throw new Error( response.statusText )
+            }
+        }).then( data => {
+            if( data.code === OK ){
+                toastr.success( '修改成功!')
+            }else{
+                throw new Error( data.msg )
+            }
+        }).catch( error => {
+            toastr.error( error.message )
+        })
+    }
+}
 /**
  * login
  */
@@ -71,13 +100,13 @@ export const login = (account, pwd) => {
                             status:AUTHENTICATED
                         }
                     })
+                    toastr.success('登录成功!')
                     return data
                 } else {
                     throw new Error(data.msg)
                 }
             }).catch(error => {
                 dispatch(loginFail(error.message))
-                return error
             })
         }
     }
@@ -102,10 +131,10 @@ export const logoutFail = error => {
         error
     }
 }
-export const logout = (id, token) => {
-    return dispatch => {
-        dispatch(startLogout())
-        return fetch(`${ADMIN_LOGOUT_API}?key=${id}&token=${token}`
+export const logout = () => {
+    return (dispatch,getState) => {
+        const user = getState().auth.user
+        return fetch(`${ADMIN_LOGOUT_API}?key=${user.id}&token=${user.token}`
         ).then(response => {
             if (response.ok) {
                 return response.json()
@@ -115,13 +144,12 @@ export const logout = (id, token) => {
         }).then(data => {
             if (data.code === OK) {
                 dispatch(logoutSuccess())
-                return data
+                toastr.success('登出成功!')
             } else {
                 throw new Error(data.msg)
             }
         }).catch(error => {
-            dispatch(logoutFail(error.message))
-            return error
+            toastr.error( error.message )
         })
     }
 }

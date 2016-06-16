@@ -10,6 +10,7 @@ import {
 import {
     object2string
 } from '../utils/convert'
+import { toastr } from 'react-redux-toastr'
 
 
 export const ADD_USER_REQUEST = 'ADD_USER_REQUEST'
@@ -24,19 +25,22 @@ export const UPDATE_USER_TOTAL = 'UPDATE_USER_TOTAL'
 export const USER_GET_SUCCESS = 'USER_GET_SUCCESS'
 export const USER_GET_FAILURE = 'USER_GET_FAILURE'
 
-export const get = (key,token,args) => {
-    return fetch(`${USER_GET_API}?key=${key}&token=${token}&${object2string(args)}`)
-        .then(response => {
-            if (response.ok) {
-                return response.json()
-            } else {
-                throw new Error(response.statusText)
-            }
-        }).then(data => data).catch(error => {
-            return {
-                msg: error.message
-            }
-        })
+export const get = (args) => {
+    return (dispatch,getState) =>{
+        const user = getState().auth.user
+        return fetch(`${USER_GET_API}?key=${user.id}&token=${user.token}&${object2string(args)}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error(response.statusText)
+                }
+            }).then(data => data).catch(error => {
+                return {
+                    msg: error.message
+                }
+            })
+    }
 }
 
 export const getUserSuccess = (user) =>{
@@ -112,24 +116,29 @@ export const fetchInfo = (args) => {
     }
 }
 
-export const add = (user) => {
-    return fetch(`${USER_ADD_API}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: object2string(user)
-    }).then(response => {
-        if (response.ok) {
-            return response.json()
-        } else {
-            throw new Error(response.statusText)
-        }
-    }).then(data => data).catch(error => {
-        return {
-            msg: error.message
-        }
-    })
+export const add = (args) => {
+    return (dispatch, getState) => {
+        const user =  getState().auth.user
+        args.id = user.id
+        args.token = user.token
+        return fetch(`${USER_ADD_API}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: object2string(args)
+        }).then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error(response.statusText)
+            }
+        }).then(data => data).catch(error => {
+            return {
+                msg: error.message
+            }
+        })
+    }
 }
 
 export const startAddUser = () => {
@@ -159,20 +168,15 @@ export const addUser = (args) => {
         args.token = user.token
         return add(args).then(data => {
             if (data.code === OK) {
-                // dispatch(addUserSuccess())
-                return {
-                    ok: true
-                }
+                toastr.success( '新建用户成功!' )
             } else {
                 // dispatch(addUserFailure(data.msg || '新建用户失败'))
-                return {
-                    msg: data.msg || '新建用户失败'
-                }
+                throw new Error(
+                    data.msg || '新建用户失败'
+                )
             }
         }).catch(error => {
-            return {
-                msg: error.message
-            }
+            toastr.error( error.message )
         })
     }
 }
@@ -240,6 +244,7 @@ export const edit = (args) => {
             if(data.code === OK){
                 //update detail state
                 dispatch(getUserSuccess(args))
+                toastr.success('操作成功')
                 return {
                     ok:true
                 }
@@ -249,9 +254,7 @@ export const edit = (args) => {
                 }
             }
         }).catch(error => {
-            return {
-                msg:error.message
-            }
+            toastr.error( error.message )
         })
     }
 }

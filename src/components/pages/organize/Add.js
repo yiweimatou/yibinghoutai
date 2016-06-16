@@ -3,6 +3,7 @@ import { Field } from 'redux-form'
 import { RaisedButton, MenuItem } from 'material-ui'
 import TextField from '../../ReduxForm/TextField'
 import SelectField from '../../ReduxForm/SelectField'
+import ImageUpload from '../../ImageUpload'
 
 const styles = {
     form:{
@@ -43,10 +44,11 @@ const styles = {
 class Add extends React.Component {
     render(){
         const {
-            handleSubmit,submitting,invalid,reset
+            handleSubmit,submitting,invalid,reset,onChange
         } = this.props
         return (
             <form onSubmit = { handleSubmit } style = { styles.form}>
+                <ImageUpload onChange = { onChange }/>
                 <Field name = 'oname' 
                     type = 'text'
                     hintText = '机构名称'
@@ -61,13 +63,6 @@ class Add extends React.Component {
                     component = {TextField}
                     style = { styles.item }
                 />
-                <Field name = 'logo' 
-                    type = 'text'
-                    hintText = 'logoURL地址'
-                    floatingLabelText = 'logoURL地址'
-                    component = {TextField}
-                    style = { styles.item }
-                />
                 <Field name = 'state'
                     component = { SelectField }
                     style = { styles.item }
@@ -77,6 +72,18 @@ class Add extends React.Component {
                     <MenuItem value={1} primaryText="正常"/>
                     <MenuItem value={2} primaryText="冻结"/>
                     <MenuItem value={3} primaryText="永久冻结"/>
+                </Field>
+                <Field name = 'category'
+                    component = { SelectField }
+                    style = { styles.item }
+                    hintText = '机构类型'
+                    floatingLabelText = '机构类型'
+                >
+                    <MenuItem value={1} primaryText="官方"/>
+                    <MenuItem value={2} primaryText="医院"/>
+                    <MenuItem value={3} primaryText="药企"/>
+                    <MenuItem value={4} primaryText='学校'/>
+                    <MenuItem value={5} primaryText='其他'/>
                 </Field>
                 <Field name = 'descript'
                     hintText = '机构简介'
@@ -108,7 +115,8 @@ Add.propTypes = {
     handleSubmit:React.PropTypes.func.isRequired,
     submitting:React.PropTypes.bool.isRequired,
     reset:React.PropTypes.func.isRequired,
-    invalid:React.PropTypes.bool.isRequired
+    invalid:React.PropTypes.bool.isRequired,
+    onChange:React.PropTypes.func.isRequired
 }
 
 export default Add

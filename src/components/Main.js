@@ -1,8 +1,7 @@
 import React from 'react'
 import {
     AppBar,
-    Paper,
-    Snackbar
+    Paper
 } from 'material-ui'
 import IconMenu from 'material-ui/IconMenu'
 import MenuItem from 'material-ui/MenuItem'
@@ -38,9 +37,7 @@ class Main extends React.Component {
             pathname,
             account,
             handleSelect,
-            dismiss,
-            errorMessage,
-            handleActionTouchTap
+            logoutHandler
         } = this.props
         return (
             <div>
@@ -55,8 +52,7 @@ class Main extends React.Component {
                                 targetOrigin={{horizontal: 'right', vertical: 'top'}}
                                 anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                             >
-                                <MenuItem primaryText="个人设置" />
-                                <MenuItem primaryText="安全退出" />
+                                <MenuItem primaryText="安全退出" onClick = { logoutHandler } />
                             </IconMenu>
                     }
                 />
@@ -70,12 +66,6 @@ class Main extends React.Component {
                         {this.props.children}
                     </Paper>
                 </div>
-                <Snackbar
-                    open = { !dismiss }
-                    message = { errorMessage }
-                    action="确定"
-                    onActionTouchTap={ handleActionTouchTap }
-                />
             </div>
         )
     }
@@ -86,9 +76,7 @@ Main.propTypes = {
     account:React.PropTypes.string.isRequired,
     pathname:React.PropTypes.string.isRequired,
     handleSelect:React.PropTypes.func.isRequired,
-    errorMessage:React.PropTypes.string,
-    handleActionTouchTap:React.PropTypes.func.isRequired,
-    dismiss:React.PropTypes.bool.isRequired
+    logoutHandler:React.PropTypes.func.isRequired
 }
 
 export default Main

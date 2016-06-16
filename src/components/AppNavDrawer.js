@@ -43,14 +43,14 @@ class AppNavDrawer extends React.Component{
 						primaryTogglesNestedList = {true}
 						nestedItems = {[
 							<ListItem primaryText = "新增" value = "/user/add" />,
-							<ListItem primaryText = "列表" value = "/user/list" />
+							<ListItem primaryText = "列表" value = "/user/list" />,
+							<ListItem primaryText = "重置密码" value = "/user/resetpwd" />
 						]}			
 					/>
 					<ListItem 
 						primaryText="个人设置" 
 						primaryTogglesNestedList = {true}
 						nestedItems = {[
-							<ListItem primaryText = "基本信息" value = "/setting/basic" />,
 							<ListItem primaryText = "修改密码" value = "/setting/changepwd" />
 						]}			
 					/>

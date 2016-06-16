@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { Router } from 'react-router'
 import { Provider } from 'react-redux'
+import ReduxToastr from 'react-redux-toastr'
 
 class AppContainer extends React.Component {
   static propTypes = {
@@ -20,6 +21,9 @@ class AppContainer extends React.Component {
             children = { routes }
             onUpdate = { () => window.scrollTo(0, 0) }
            />
+           <ReduxToastr
+            timeOut = { 3000 }
+          /> 
         </div>
       </Provider>
     )

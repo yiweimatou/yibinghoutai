@@ -6,7 +6,7 @@ import {
     LOGOUT_SUCCESS,
     LOGOUT_FAIL,
     AUTHENTICATED
-} from '../constants/actiontypes/auth.js'
+} from '../constants/ActionTypes'
 
 const initalState = {
     user: {

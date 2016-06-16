@@ -6,9 +6,6 @@ import {
     isMobile
 } from 'utils/validation'
 import {
-    addErrorMessage
-} from 'actions/error'
-import {
     edit
 } from 'actions/user'
 
@@ -22,16 +19,16 @@ const validate = values => {
 }
 
 const onSubmit = (values, dispatch) => {
-    return new Promise((resolve, reject) => {
-        dispatch(edit(values)).then(data => {
-            if (data.ok) {
-                resolve(dispatch(addErrorMessage('编辑成功！')))
-            } else {
-                return reject(dispatch(addErrorMessage(`编辑失败:${data.msg}`)))
-            }
-        }).catch(error => {
-            return reject(dispatch(addErrorMessage(error.message)))
-        })
+    return new Promise((resolve) => {
+        const user =  {
+            mobile : values.mobile,
+            cname:values.cname,
+            uid:values.uid,
+            state:values.state,
+            lesson:values.lesson,
+            lessons:values.lessons
+        }
+        resolve(dispatch(edit(user)))
     })
 }
 

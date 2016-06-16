@@ -3,6 +3,7 @@ import { Field } from 'redux-form'
 import { MenuItem, RaisedButton } from 'material-ui'
 import TextField  from '../../ReduxForm/TextField'
 import  SelectField  from '../../ReduxForm/SelectField'
+import ImageUpload from '../../ImageUpload'
 
 const styles = {
     form:{
@@ -53,19 +54,17 @@ class EditView extends React.Component {
     }
     render(){
         const {
-            handleSubmit,submitting,invalid
+            handleSubmit,submitting,invalid,onChange,organize
         } = this.props
+        if( !organize ){
+            return (null)
+        }
         return (
             <form onSubmit = { handleSubmit } style = { styles.form }>
+                <ImageUpload onChange ={ onChange } url = { organize.logo }/>
                 <Field name = 'oname' 
                     hintText = '机构名称'
                     floatingLabelText = '机构名称'
-                    component = {TextField}
-                    style = { styles.item }
-                />
-                <Field name = 'logo' 
-                    hintText = 'logoURL地址'
-                    floatingLabelText = 'logoURL地址'
                     component = {TextField}
                     style = { styles.item }
                 />
@@ -103,7 +102,9 @@ class EditView extends React.Component {
 EditView.propTypes = {
     submitting:React.PropTypes.bool.isRequired,
     invalid:React.PropTypes.bool.isRequired,
-    handleSubmit:React.PropTypes.func.isRequired
+    handleSubmit:React.PropTypes.func.isRequired,
+    onChange:React.PropTypes.func.isRequired,
+    organize:React.PropTypes.object
 }
 
 export default EditView

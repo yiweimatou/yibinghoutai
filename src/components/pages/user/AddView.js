@@ -15,11 +15,6 @@ const styles = {
     margin:{
         marginLeft:20
     },
-    div:{
-        display:'flex',
-        alignItems:'flex-end',
-        width:'80%'
-    },
     submit:{
         display:'flex',
         width:'80%',

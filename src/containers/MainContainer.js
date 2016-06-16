@@ -5,16 +5,12 @@ import {
 import {
     push
 } from 'react-router-redux'
-import {
-    resetErrorMessage
-} from 'actions/error'
+import { logout } from 'actions/auth'
 
 const mapStateToProps = state => {
     return {
         account : state.auth.user.account,
-        pathname : state.router.locationBeforeTransitions.pathname,
-        dismiss : state.error.dismiss,
-        errorMessage:state.error.errorMessage
+        pathname : state.router.locationBeforeTransitions.pathname
     }
 }
 
@@ -23,8 +19,9 @@ const mapDispatchToProps = dispatch => {
         handleSelect:(e,value) => {
             dispatch(push(value))
         },
-        handleActionTouchTap:()=> {
-            dispatch(resetErrorMessage())
+        logoutHandler:()=>{
+            dispatch( logout() )
+            dispatch(push('/login'))
         }
     }
 }

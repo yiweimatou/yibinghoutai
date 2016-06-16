@@ -9,9 +9,7 @@ import {
     removeRequest,
     fetchList
 } from 'actions/organize'
-import {
-    addErrorMessage
-} from 'actions/error'
+import { toastr } from 'react-redux-toastr'
 
 const mapStateToProps = state => {
     return {
@@ -26,7 +24,7 @@ const mapDispatchToProps = dispatch => {
     return {
         editHandler: id => {
             if (id <= 0) {
-                dispatch(addErrorMessage('请先选择一项'))
+               toastr.info('请先选择一项')
             } else {
                 dispatch(push(`/organize/edit/${id}`))
             }
@@ -34,14 +32,14 @@ const mapDispatchToProps = dispatch => {
         },
         deleteHandler: id => {
             if (id <= 0) {
-                dispatch(addErrorMessage('请先选择一项'))
+                toastr.info('请先选择一项')
             } else {
                 dispatch(removeRequest(id))
             }
         },
         detailHandler: id => {
             if (id <= 0) {
-                dispatch(addErrorMessage('请先选择一项'))
+                toastr.info('请先选择一项')
             } else {
                 dispatch(push(`/organize/detail/${id}`))
             }

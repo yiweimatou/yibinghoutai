@@ -13,6 +13,8 @@ import {
 import {
     addErrorMessage
 } from 'actions/error'
+import { toastr } from 'react-redux-toastr'
+
 
 export const ADD_ORGANIZE_REQUEST = 'ADD_ORGANIZE_REQUEST'
 export const ADD_ORGANIZE_SUCCESS = 'ADD_ORGANIZE_SUCCESS'
@@ -32,24 +34,31 @@ export const GET_ORGANIZE_REQUEST = 'GET_ORGANIZE_REQUEST'
 export const GET_ORGANIZE_SUCCESS = 'GET_ORGANIZE_SUCCESS'
 export const GET_ORGANIZE_FAILURE = 'GET_ORGANIZE_FAILURE'
 
-export const add = (key, token, organize) => {
+export const add = (organize) => {
+    return ( dispatch,getState )=>{
+        const user = getState().auth.user
     return fetch(ORGANIZE_ADD_API, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: `${object2string(organize)}&key=${key}&token=${token}`
+        body: `${object2string(organize)}&key=${user.id}&token=${user.token}`
     }).then(response => {
         if (response.ok) {
             return response.json()
         } else {
             throw new Error(response.statusText)
         }
-    }).then(data => data).catch(error => {
-        return {
-            msg: error.message
+    }).then(data => {
+        if( data.code === OK ){
+            toastr.success('新建成功!')
+        }else{
+            throw new Error( data.msg )
         }
+    }).catch(error => {
+        toastr.error( error.message )
     })
+}
 }
 
 export const list = (key, token, args) => {
@@ -248,7 +257,6 @@ export const getOrganizeIfNeeded = args => {
 
 export const edit = (args) => {
     return (dispatch, getState) => {
-
         const user = getState().auth.user
         return fetch(`${ORGANIZE_EDIT_API}`, {
             method: 'PUT',
@@ -265,16 +273,12 @@ export const edit = (args) => {
         }).then(data => {
             if (data.code === OK) {
                 dispatch(getSuccess(args))
-                return {
-                    ok: true
-                }
+                toastr.success('编辑成功！')
             } else {
                 throw new Error(data.msg)
             }
         }).catch(error => {
-            return {
-                msg: error.message
-            }
+            toastr.error( error.message )
         })
     }
 }

@@ -1,8 +1,8 @@
 import { push } from 'react-router-redux'
 import ListView from 'components/pages/user/ListView'
-import { addErrorMessage } from 'actions/error'
 import { connect } from 'react-redux'
 import { fetchUserList } from 'actions/user'
+import { toastr } from 'react-redux-toastr'
 
 const mapStateToProps = state => {
     return {
@@ -17,7 +17,7 @@ const mapDispatchToProps = dispatch => {
     return {
         editHandler : id => {
             if(id <= 0) {
-                dispatch(addErrorMessage('请先选择一项'))
+                toastr.info('请先选择一项')
             } else {
                 dispatch(push(`/user/edit/${id}`))
             }
