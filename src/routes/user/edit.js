@@ -5,11 +5,9 @@ import {
     getUserIfNeeded
 } from 'actions/user'
 import {
-    addErrorMessage
-} from 'actions/error'
-import {
     injectReducer
 } from 'store/reducers'
+import { toastr } from 'react-redux-toastr'
 
 const editRoute = store => ({
     path: 'edit/:id',
@@ -34,7 +32,7 @@ const editRoute = store => ({
                 store.dispatch(initialize('editUser', user))
             }
         }).catch(error => {
-            store.dispatch(addErrorMessage(error.message))
+            toastr.error(error.message)
         })
     },
     getComponent(nextState, cb) {

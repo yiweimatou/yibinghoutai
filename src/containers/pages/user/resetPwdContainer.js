@@ -18,7 +18,7 @@ const validate = values => {
 }
 
 const onSubmit = (values, dispatch) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve,reject) => {
         dispatch(get({
             mobile: values.mobile
         })).then(data => {
@@ -29,7 +29,7 @@ const onSubmit = (values, dispatch) => {
                     pwd: values.pwd
                 })))
             } else {
-                toastr.error(data.msg || '用户不存在')
+                reject(toastr.error(data.msg || '用户不存在'))
             }
         })
     })

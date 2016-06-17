@@ -6,8 +6,7 @@ import {
     TableHeaderColumn, 
     TableRow, 
     TableRowColumn, IconButton
-}
-  from 'material-ui'
+} from 'material-ui'
 import {ActionDelete,EditorModeEdit,ActionInfo} from 'material-ui/svg-icons'
 import PagingTableFooter from '../../PagingTableFooter.js'
 import {red500,blue500,lightBlue50,cyan500} from 'material-ui/styles/colors'

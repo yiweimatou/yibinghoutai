@@ -69,8 +69,7 @@ export const getUserIfNeeded = args => {
         if(detail){
             return dispatch(getUserSuccess(detail))
         }
-        const user =  getState().auth.user
-        return get(user.id,user.token,args).then(data => {
+        return dispatch(get(args)).then(data => {
             if(data.code === OK && data.get.uid > 0){
                 dispatch(getUserSuccess(data.get))
                 return {
