@@ -4,9 +4,9 @@
   "description": "公司管理医院医生后台",
   "main": "",
   "scripts": {
-    "start": "node ./bin/server.js",
+    "start": "set NODE_ENV=development&&node ./bin/server.js",
     "test": "./node_modules/.bin/ava",
-    "deploy": "export NODE_ENV=production&&babel-node ./bin/compile"
+    "deploy": "set NODE_ENV=production&&babel-node ./bin/compile"
   },
   "repository": {
     "type": "git",

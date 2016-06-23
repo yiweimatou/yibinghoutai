@@ -6,7 +6,9 @@ import {
     edit
 } from 'actions/organize'
 import { uploadLogo } from 'actions/upload'
+import { isMobile } from 'utils/validation'
 import { connect } from 'react-redux'
+import { getUserIfNeeded,add } from 'actions/user'
 
 const validate = values => {
     const errors = {}
@@ -15,6 +17,11 @@ const validate = values => {
     }
     if (!values.state) {
         errors.state = '请选择机构状态'
+    }
+    if(!values.mobile){
+        errors.mobile = '请输入管理员手机号'
+    }else if( !isMobile(values.mobile)){
+        errors.mobile = '请输入正确的手机号码'
     }
     return errors
 }
@@ -38,14 +45,34 @@ const onSubmit = (values, dispatch) => {
         logo : values.logo
     }
     return new Promise((resolve) => {
-        if( values.file ){
-            uploadLogo(values.file).then( logo => {
-                organize.logo = logo
-                resolve( dispatch( edit( organize ) ) )
-            })
-        }else{
-            resolve(dispatch(edit(organize)))
-        }
+        dispatch( getUserIfNeeded({mobile:values.mobile}) ).then(user=>{
+            if( !user ){
+                return dispatch( add({mobile:values.mobile,pwd:values.mobile}) ).then(data=>{
+                    if( data.code === 200 && data.identity ) {
+                        return data.identity
+                    }else{
+                        throw new Error( '创建用户失败' )
+                    }
+                })
+            }else{
+                return user.uid
+            }
+        }).then( uid => {
+            if( !uid ){
+                return resolve()
+            }
+            organize.uid = uid
+            if( values.file ){
+                uploadLogo(values.file).then( logo => {
+                    organize.logo = logo
+                    resolve( dispatch( edit( organize ) ) )
+                })
+            }else{
+                resolve(dispatch(edit(organize)))
+            }
+        }).catch( error=>{
+            resolve( error.message )
+        })
     })
 }
 

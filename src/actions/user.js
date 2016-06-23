@@ -60,28 +60,27 @@ export const getUserFailure = message => {
 export const getUserIfNeeded = args => {
     return (dispatch,getState) => {
         const _user = getState().user
-        if(_user.detail && _user.detail.uid === args.uid){
-            return
+        if(_user &&　_user.detail && _user.detail.uid === args.uid){
+            return _user.detail
         }
-        const detail = _user.list.find( item => {
-            return item.uid === args.uid
-        })
-        if(detail){
-            return dispatch(getUserSuccess(detail))
+        if( _user && _user.list ){
+            const detail = _user.list.find( item => {
+                return item.uid === args.uid
+            })
+            if(detail){
+                 dispatch(getUserSuccess(detail))
+                 return detail
+            }
         }
         return dispatch(get(args)).then(data => {
             if(data.code === OK && data.get.uid > 0){
                 dispatch(getUserSuccess(data.get))
-                return {
-                    ok:true
-                }
+                return data.get
             }else{
                 throw new Error(data.msg || '找不到该用户')
             }
         }).catch(error => {
-             return {
-                 msg: error.message
-             }
+             console.error( error.message )
         })
     }
 }
@@ -118,7 +117,7 @@ export const fetchInfo = (args) => {
 export const add = (args) => {
     return (dispatch, getState) => {
         const user =  getState().auth.user
-        args.id = user.id
+        args.key = user.id
         args.token = user.token
         return fetch(`${USER_ADD_API}`, {
             method: 'POST',

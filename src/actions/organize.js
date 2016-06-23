@@ -10,10 +10,8 @@ import {
 import {
     object2string
 } from '../utils/convert'
-import {
-    addErrorMessage
-} from 'actions/error'
 import { toastr } from 'react-redux-toastr'
+import { getUserIfNeeded } from 'actions/user'
 
 
 export const ADD_ORGANIZE_REQUEST = 'ADD_ORGANIZE_REQUEST'
@@ -97,10 +95,10 @@ export const startFetchList = () => {
     }
 }
 
-export const fetchListSuccess = (data, offset) => {
+export const fetchListSuccess = (list, offset) => {
     return {
         type: FETCH_ORGANIZE_LIST_SUCCESS,
-        list: data.list,
+        list,
         offset
     }
 }
@@ -114,13 +112,24 @@ export const fetchListFailure = (errorMessage) => {
 
 export const fetchList = (args) => {
     return (dispatch, getState) => {
-        startFetchList()
         const user = getState().auth.user
-        list(user.id, user.token, args).then(data => {
+        return list(user.id, user.token, args).then(data => {
             if (data.code === OK) {
-                return dispatch(fetchListSuccess(data, args.offset || 1))
+                if( data.list.length > 0 ){
+                    Promise.all(data.list.slice().map( item =>{
+                        return dispatch( getUserIfNeeded({uid:item.uid})).then(user=>{
+                            item.mobile = user.mobile
+                            return item
+                        })
+                    })).then( array=>{
+                        dispatch(fetchListSuccess(array, args.offset || 1))
+                        return array
+                    })
+                }else{
+                    return null
+                }
             } else {
-                return dispatch(fetchListFailure(data.msg))
+                return toastr.error(data.msg)
             }
         })
     }
@@ -236,21 +245,22 @@ export const getOrganizeIfNeeded = args => {
             return
         }
         const detail = organize.list.find(item => {
-            return item.oid === args.oid
+            return item.oid == args.oid
         })
         if (detail) {
             return dispatch(getSuccess(detail))
         }
         const user = getState().auth.user
-        dispatch(startGet())
         return get(user.id, user.token, args).then(data => {
             if (data.code === OK && data.get.oid > 0) {
-                return dispatch(getSuccess(data.get))
+                return dispatch( getUserIfNeeded({uid:data.get.uid})).then(user=>{
+                    return dispatch(getSuccess(Object.assign({},data.get,{mobile:user.mobile})))
+                })
             } else {
                 throw new Error(data.msg || '找不到该机构')
             }
         }).catch(error => {
-            return dispatch(getFailure(error.message))
+            toastr.error(error.message)
         })
     }
 }

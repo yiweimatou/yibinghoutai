@@ -41,17 +41,6 @@ const styles = {
     }
 }
 class EditView extends React.Component {
-    handleFileChange = (e)=>{
-        document.querySelector('#logoPath').value = e.target.value
-        this.setState({
-            canLogoUpload:true
-        })    
-    }
-    handleChooseFileClick = ()=>{
-        setTimeout(() => {
-            document.querySelector('#logoFile').click()
-        }, 200)
-    }
     render(){
         const {
             handleSubmit,submitting,invalid,onChange,organize
@@ -78,12 +67,18 @@ class EditView extends React.Component {
                     <MenuItem value={ 2 } primaryText="冻结"/>
                     <MenuItem value={ 3 } primaryText="永久冻结"/>
                 </Field>
+                <Field name = 'mobile'
+                    component = { TextField }
+                    hintText = '机构管理员手机号'
+                    floatingLabelText = '机构管理员手机号'
+                    style = { styles.item }
+                />
                 <Field name = 'descript'
                     hintText = '机构简介'
                     floatingLabelText = '机构简介'
                     component = { TextField }
                     multiLine = { true }
-                    rows = { 2 }
+                    rows = { 3 }
                     style = { styles.item }
                 />
                 <div style = {styles.submit}>
